@@ -31,6 +31,13 @@
 $ npm install
 ```
 
+## API documentation
+
+Start the application and open `http://localhost:3000`; the root URL redirects
+to the Swagger UI at `/api/docs`. The port follows the `PORT` environment
+variable when it is set. The application also exposes `GET /health` and
+`GET /version` endpoints.
+
 ## Compile and run the project
 
 ```bash

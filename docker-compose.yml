@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: backend-api-postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: backend_api
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U app_user -d backend_api"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

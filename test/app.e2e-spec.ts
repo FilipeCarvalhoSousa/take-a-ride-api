@@ -16,11 +16,25 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/ (GET) redirects to the Swagger UI', () => {
     return request(app.getHttpServer())
       .get('/')
+      .expect(302)
+      .expect('Location', '/api/docs');
+  });
+
+  it('/health (GET) returns the application health', () => {
+    return request(app.getHttpServer())
+      .get('/health')
       .expect(200)
-      .expect('Hello World!');
+      .expect({ status: 'ok' });
+  });
+
+  it('/version (GET) returns the application version', () => {
+    return request(app.getHttpServer())
+      .get('/version')
+      .expect(200)
+      .expect({ version: process.env.npm_package_version ?? '0.0.1' });
   });
 
   afterEach(async () => {

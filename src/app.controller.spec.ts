@@ -1,22 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { REDIRECT_METADATA } from '@nestjs/common/constants';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 describe('AppController', () => {
-  let appController: AppController;
+  it('redirects the root route to the Swagger UI', () => {
+    const redirectHandler = Object.getOwnPropertyDescriptor(
+      AppController.prototype,
+      'redirectToDocs',
+    )?.value;
 
-  beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
-      providers: [AppService],
-    }).compile();
-
-    appController = app.get<AppController>(AppController);
-  });
-
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
+    expect(
+      Reflect.getMetadata(REDIRECT_METADATA, redirectHandler),
+    ).toEqual({ url: '/api/docs', statusCode: 302 });
   });
 });
