@@ -1,3 +1,4 @@
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersRepository } from '../repository/users.repository';
 import { UsersService } from './users.service';
@@ -73,6 +74,37 @@ describe('UsersService', () => {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
+  });
+
+  it('throws when a user id is not found', async () => {
+    repository.findById.mockResolvedValue([]);
+
+    await expect(service.findById('missing-user')).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
+  it('throws when an email is not found', async () => {
+    repository.findByEmail.mockResolvedValue([]);
+
+    await expect(service.findByEmail('missing@example.com')).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
+  it('rejects a duplicate email without hashing or creating the user', async () => {
+    repository.findByEmail.mockResolvedValue([{ id: 'existing-user' }]);
+
+    await expect(
+      service.createNewUser({
+        name: 'João da Silva',
+        email: 'joao.silva@example.com',
+        phone: '+5511999999999',
+        password: 'Senha@123',
+      }),
+    ).rejects.toThrow(ConflictException);
+
+    expect(repository.createUser).not.toHaveBeenCalled();
   });
 
   it('generates the user id when creating a user', async () => {

@@ -1,6 +1,7 @@
-import { pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { pgEnum, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { users } from './users.schema';
+import { rides } from './rides.schema';
 
 
 // Status de aprovação da conta do motorista no app
@@ -19,6 +20,7 @@ export const driversRelations = relations(drivers, ({ one, many }) => ({
     fields: [drivers.userId],
     references: [users.id],
   }),
+  rides: many(rides, { relationName: 'driverRides' }),
 }));
 
 export type Driver = typeof drivers.$inferSelect;

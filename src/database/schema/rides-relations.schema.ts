@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { rides } from "./rides.schema";
 import { users } from "./users.schema";
+import { drivers } from "./drivers.schema";
 
 export const ridesRelations = relations(rides, ({ one }) => ({
   passenger: one(users, {
@@ -8,9 +9,9 @@ export const ridesRelations = relations(rides, ({ one }) => ({
     references: [users.id],
     relationName: 'passengerRides',
   }),
-  driver: one(users, {
+  driver: one(drivers, {
     fields: [rides.driverId],
-    references: [users.id],
+    references: [drivers.id],
     relationName: 'driverRides',
   }),
 }));

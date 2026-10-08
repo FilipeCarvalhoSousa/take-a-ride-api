@@ -1,15 +1,13 @@
-import { Injectable } from "@nestjs/common";
-import { eq } from "drizzle-orm";
-import { DatabaseService } from "../../../database/database.service";
+import { Injectable } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
+import { DatabaseService } from '../../../database/database.service';
 
-import { UserInterface } from "../interface/user-db.interface";
-import { users } from "../../../database/schema/users.schema";
+import { UserInterface } from '../interface/user-db.interface';
+import { users } from '../../../database/schema/users.schema';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    private readonly database: DatabaseService,
-  ) { }
+  constructor(private readonly database: DatabaseService) {}
 
   async findByEmail(email: string) {
     return this.database.db

@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -16,20 +23,18 @@ import { UsersService } from '../service/users.service';
 @ApiTags('Usuários')
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-  ) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('find-by-id/:id')
   @ApiBadRequestResponse({
-    description: 'O identificador informado não é um UUID válido.'
+    description: 'O identificador informado não é um UUID válido.',
   })
   @ApiNotFoundResponse({
-    description: 'Usuário não encontrado.'
+    description: 'Usuário não encontrado.',
   })
   @ApiOkResponse({ description: 'Usuário encontrado.' })
   @ApiInternalServerErrorResponse({
-    description: 'Erro interno do servidor.'
+    description: 'Erro interno do servidor.',
   })
   @ApiOperation({ summary: 'Busca usuário pelo identificador' })
   findById(
@@ -41,11 +46,11 @@ export class UsersController {
 
   @Get('/find-by-email/:email')
   @ApiNotFoundResponse({
-    description: 'Usuário não encontrado.'
+    description: 'Usuário não encontrado.',
   })
   @ApiOkResponse({ description: 'Usuário encontrado.' })
   @ApiInternalServerErrorResponse({
-    description: 'Erro interno do servidor.'
+    description: 'Erro interno do servidor.',
   })
   @ApiOperation({ summary: 'Busca usuário pelo e-mail' })
   findByEmail(
@@ -62,20 +67,17 @@ export class UsersController {
   })
   @ApiCreatedResponse({
     description: 'Usuário criado com sucesso.',
-
   })
   @ApiConflictResponse({
-    description: 'Já existe um usuário com esse e-mail.'
+    description: 'Já existe um usuário com esse e-mail.',
   })
   @ApiBadRequestResponse({
-    description: 'Dados do usuário inválidos.'
+    description: 'Dados do usuário inválidos.',
   })
   @ApiInternalServerErrorResponse({
-    description: 'Erro interno do servidor.'
+    description: 'Erro interno do servidor.',
   })
-  createNewUser(
-    @Body() user: CreateUserDto,
-  ) {
+  createNewUser(@Body() user: CreateUserDto) {
     return this.usersService.createNewUser(user);
   }
 }
