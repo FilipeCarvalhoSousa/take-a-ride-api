@@ -5,6 +5,7 @@ import { DatabaseModule } from './database/database.module';
 import { RidesModule } from './modules/rides/rides.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
+import { DriversModule } from './modules/drivers/drivers.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -16,6 +17,7 @@ import configuration from './config/configuration';
     DatabaseModule,
     RidesModule,
     UsersModule,
+    DriversModule,
   ],
   controllers: [AppController],
   providers: [AppService],

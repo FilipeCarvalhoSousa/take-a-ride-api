@@ -1,7 +1,5 @@
-// src/database/schema.ts
-import { pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { pgEnum, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 
-// Enums do Banco de Dados
 export const roleEnum = pgEnum('role', ['PASSENGER', 'DRIVER']);
 
 export const users = pgTable('users', {

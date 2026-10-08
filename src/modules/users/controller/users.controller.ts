@@ -20,7 +20,7 @@ export class UsersController {
     private readonly usersService: UsersService,
   ) { }
 
-  @Get(':id')
+  @Get('find-by-id/:id')
   @ApiBadRequestResponse({
     description: 'O identificador informado não é um UUID válido.'
   })

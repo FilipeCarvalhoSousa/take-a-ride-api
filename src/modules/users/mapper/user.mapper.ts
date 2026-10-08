@@ -1,5 +1,5 @@
 import { User } from "../../../database/schema/users.schema";
-import { UserResponseInterface } from "../repository/user-response.interface";
+import { UserResponseInterface } from "../interface/user-response.interface";
 
 export class UserMapper {
   static toUserResponse(user: User): UserResponseInterface {

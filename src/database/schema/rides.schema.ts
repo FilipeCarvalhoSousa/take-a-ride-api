@@ -1,6 +1,8 @@
 // src/database/schema.ts
 import { doublePrecision, integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { users } from './schema';
+
+import { drivers } from './drivers.schema';
+import { users } from './users.schema';
 
 // Enums do Banco de Dados
 export const rideStatusEnum = pgEnum('ride_status', [
@@ -14,7 +16,7 @@ export const rideStatusEnum = pgEnum('ride_status', [
 export const rides = pgTable('rides', {
   id: uuid('id').defaultRandom().primaryKey(),
   passengerId: uuid('passenger_id').notNull().references(() => users.id),
-  driverId: uuid('driver_id').references(() => users.id),
+  driverId: uuid('driver_id').references(() => drivers.id),
   status: rideStatusEnum('status').default('REQUESTED').notNull(),
 
   originAddress: text('origin_address').notNull(),

@@ -8,6 +8,20 @@
       "when": 1791390031938,
       "tag": "0000_smiling_reavers",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791470558692,
+      "tag": "0001_sweet_masked_marvel",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791473782716,
+      "tag": "0002_normal_beast",
+      "breakpoints": true
     }
   ]
 }
