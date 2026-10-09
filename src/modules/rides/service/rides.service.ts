@@ -1,11 +1,15 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { AcceptRideDto } from '../dto/accept-ride.dto';
 import { CreateRideDto } from '../dto/create-ride.dto';
 import { RidesRepository } from '../repository/rides.repository';
 
 import { UsersService } from '../../users/service/users.service';
 import { RidesGateway } from '../gateway/rides.gateway';
-
+import { calculateFixedFare } from '../../../common/utils/fare-calculator.util';
 
 @Injectable()
 export class RidesService {
@@ -13,7 +17,7 @@ export class RidesService {
     private readonly repository: RidesRepository,
     private readonly userService: UsersService,
     private readonly gateway: RidesGateway,
-  ) { }
+  ) {}
 
   async createRide(dto: CreateRideDto) {
     await this.userService.findById(dto.passengerId);
@@ -22,8 +26,19 @@ export class RidesService {
       ...dto,
       id: crypto.randomUUID(),
     };
+    const unitPrice = calculateFixedFare({
+      originCity: dto.originCity,
+      destinationCity: dto.destinationCity,
+      isEntorno: dto.isEntorno,
+    });
 
-    const newRide = await this.repository.createRide(rideWithId);
+    const totalPrice = unitPrice * dto.seatsRequested;
+    const newRide = await this.repository.createRide({
+      ...rideWithId,
+      price: totalPrice,
+      seatsRequested: dto.seatsRequested,
+    });
+
     this.gateway.notifyNewRide(newRide);
     return newRide;
   }
@@ -42,7 +57,9 @@ export class RidesService {
     const ride = await this.getRideById(rideId);
 
     if (ride.status !== 'REQUESTED') {
-      throw new BadRequestException('Esta corrida não está mais disponível para aceite.');
+      throw new BadRequestException(
+        'Esta corrida não está mais disponível para aceite.',
+      );
     }
 
     const updatedRide = await this.repository.updateRideStatus(rideId, {

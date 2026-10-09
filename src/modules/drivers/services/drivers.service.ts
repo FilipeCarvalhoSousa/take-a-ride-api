@@ -58,6 +58,7 @@ export class DriversService {
       id: crypto.randomUUID(),
       userId: dto.userId,
       cnh: dto.cnh,
+      role: 'DRIVER' as const,
       status: 'PENDING_APPROVAL' as const,
     };
     return this.repository.createDriver(driverWithGeneratedId);

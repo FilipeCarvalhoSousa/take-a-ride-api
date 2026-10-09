@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsUUID,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class CreateRideDto {
   @ApiProperty({
@@ -9,7 +18,10 @@ export class CreateRideDto {
   @IsUUID()
   passengerId: string;
 
-  @ApiProperty({ description: 'Endereço de origem.', example: 'Av. Paulista, 1000 - São Paulo' })
+  @ApiProperty({
+    description: 'Endereço de origem.',
+    example: 'Av. Paulista, 1000 - São Paulo',
+  })
   @IsString()
   originAddress: string;
 
@@ -17,11 +29,14 @@ export class CreateRideDto {
   @IsNumber()
   originLat: number;
 
-  @ApiProperty({ description: 'Longitude de origem.', example: -46.6560 })
+  @ApiProperty({ description: 'Longitude de origem.', example: -46.656 })
   @IsNumber()
   originLng: number;
 
-  @ApiProperty({ description: 'Endereço de destino.', example: 'Praça da Sé - São Paulo' })
+  @ApiProperty({
+    description: 'Endereço de destino.',
+    example: 'Praça da Sé - São Paulo',
+  })
   @IsString()
   destinationAddress: string;
 
@@ -33,11 +48,41 @@ export class CreateRideDto {
   @IsNumber()
   destinationLng: number;
 
-  @ApiProperty({ description: 'Preço estimado da corrida (R$).', example: 24.50 })
+  @ApiProperty({
+    description: 'Preço estimado da corrida (R$).',
+    example: 24.5,
+  })
   @IsNumber()
   price: number;
 
   @ApiProperty({ description: 'Distância estimada em km.', example: 5.2 })
   @IsNumber()
   distance: number;
+
+  @ApiProperty({ example: 'Ceilândia', description: 'Cidade/RA de origem' })
+  @IsString()
+  @IsNotEmpty()
+  originCity: string;
+
+  @ApiProperty({ example: 'Taguatinga', description: 'Cidade/RA de destino' })
+  @IsString()
+  @IsNotEmpty()
+  destinationCity: string;
+
+  @ApiProperty({
+    example: false,
+    description: 'Se a rota envolve cidades do Entorno do DF',
+  })
+  @IsBoolean()
+  isEntorno: boolean;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Quantidade de assentos solicitados pelo passageiro',
+    default: 1,
+  })
+  @IsInt()
+  @Min(1)
+  @Max(4)
+  seatsRequested: number;
 }

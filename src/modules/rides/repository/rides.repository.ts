@@ -18,7 +18,6 @@ export class RidesRepository {
     const [newRide] = await this.database.db
       .insert(rides)
       .values({
-        id: dto.id,
         passengerId: dto.passengerId,
         originAddress: dto.originAddress,
         originLat: dto.originLat,
@@ -26,7 +25,7 @@ export class RidesRepository {
         destinationAddress: dto.destinationAddress,
         destinationLat: dto.destinationLat,
         destinationLng: dto.destinationLng,
-        price: dto.price,
+        price: dto.price.toString(),
         distance: dto.distance,
         status: 'REQUESTED',
       })
