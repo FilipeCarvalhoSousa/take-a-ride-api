@@ -22,9 +22,9 @@ describe('RidesRepository', () => {
   });
 
   it('creates a requested ride and returns the inserted record', async () => {
-    const dto: CreateRideDto & { id: string } = {
-      id: 'ride-id',
+    const dto: CreateRideDto & { passengerName: string } = {
       passengerId: 'passenger-id',
+      passengerName: 'Passenger Name',
       originAddress: 'Origin',
       originLat: 0,
       originLng: 0,
@@ -33,10 +33,15 @@ describe('RidesRepository', () => {
       destinationLng: 1,
       price: 24.5,
       distance: 5.2,
+      originCity: 'Ceilândia',
+      destinationCity: 'Taguatinga',
+      isEntorno: false,
+      seatsRequested: 2,
     };
     const ride = {
-      id: dto.id,
+      id: 'ride-id',
       passengerId: dto.passengerId,
+      passengerName: dto.passengerName,
       originAddress: dto.originAddress,
       originLat: dto.originLat,
       originLng: dto.originLng,
@@ -45,6 +50,10 @@ describe('RidesRepository', () => {
       destinationLng: dto.destinationLng,
       price: dto.price,
       distance: dto.distance,
+      originCity: dto.originCity,
+      destinationCity: dto.destinationCity,
+      isEntorno: dto.isEntorno,
+      seatsRequested: dto.seatsRequested,
       status: 'REQUESTED' as const,
     };
     const returning = jest.fn().mockResolvedValue([ride]);
@@ -52,7 +61,19 @@ describe('RidesRepository', () => {
     database.db.insert.mockReturnValue({ values });
 
     await expect(repository.createRide(dto)).resolves.toEqual(ride);
-    expect(values).toHaveBeenCalledWith(ride);
+    expect(values).toHaveBeenCalledWith({
+      passengerId: dto.passengerId,
+      passengerName: dto.passengerName,
+      originAddress: dto.originAddress,
+      originLat: dto.originLat,
+      originLng: dto.originLng,
+      destinationAddress: dto.destinationAddress,
+      destinationLat: dto.destinationLat,
+      destinationLng: dto.destinationLng,
+      price: dto.price.toString(),
+      distance: dto.distance,
+      status: 'REQUESTED',
+    });
     expect(returning).toHaveBeenCalledTimes(1);
   });
 

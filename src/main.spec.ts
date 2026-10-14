@@ -1,5 +1,6 @@
 const mockDocument = { openapi: '3.0.0' };
 const mockApp = {
+  enableCors: jest.fn(),
   listen: jest.fn().mockResolvedValue(undefined),
 };
 const mockCreateCalls: unknown[] = [];
@@ -29,6 +30,7 @@ jest.mock('@nestjs/swagger', () => ({
 describe('main bootstrap', () => {
   beforeEach(() => {
     jest.resetModules();
+    mockApp.enableCors.mockClear();
     mockApp.listen.mockClear();
     mockCreateCalls.length = 0;
     mockCreateDocumentCalls.length = 0;
@@ -69,7 +71,11 @@ describe('main bootstrap', () => {
         ],
       ]);
       expect(mockSetupCalls).toEqual([['api/docs', mockApp, mockDocument]]);
-      expect(mockApp.listen).toHaveBeenCalledWith('4321');
+      expect(mockApp.enableCors).toHaveBeenCalledWith({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      });
+      expect(mockApp.listen).toHaveBeenCalledWith('4321', '0.0.0.0');
     } finally {
       if (originalPort === undefined) {
         delete process.env.PORT;
@@ -86,7 +92,7 @@ describe('main bootstrap', () => {
     try {
       await runBootstrap();
 
-      expect(mockApp.listen).toHaveBeenCalledWith(3000);
+      expect(mockApp.listen).toHaveBeenCalledWith(3000, '0.0.0.0');
     } finally {
       if (originalPort !== undefined) {
         process.env.PORT = originalPort;

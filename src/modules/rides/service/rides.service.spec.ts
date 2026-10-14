@@ -18,6 +18,7 @@ describe('RidesService', () => {
   const usersService = { findById: jest.fn() };
   const gateway = {
     notifyNewRide: jest.fn(),
+    notifyDriversNewRide: jest.fn(),
     notifyRideStatusUpdate: jest.fn(),
   };
 
@@ -47,18 +48,31 @@ describe('RidesService', () => {
       destinationLng: -46.63,
       price: 24.5,
       distance: 5.2,
+      originCity: 'Ceilândia',
+      destinationCity: 'Taguatinga',
+      isEntorno: false,
+      seatsRequested: 2,
     };
+    usersService.findById.mockResolvedValue({
+      id: dto.passengerId,
+      name: 'Passenger Name',
+    });
     const ride = {
       id: 'ride-id',
       passengerId: dto.passengerId,
+      passengerName: 'Passenger Name',
       originAddress: dto.originAddress,
       originLat: dto.originLat,
       originLng: dto.originLng,
       destinationAddress: dto.destinationAddress,
       destinationLat: dto.destinationLat,
       destinationLng: dto.destinationLng,
-      price: dto.price,
+      price: 7.6,
       distance: dto.distance,
+      originCity: dto.originCity,
+      destinationCity: dto.destinationCity,
+      isEntorno: dto.isEntorno,
+      seatsRequested: dto.seatsRequested,
     };
     repository.createRide.mockResolvedValue(ride);
 
@@ -68,16 +82,21 @@ describe('RidesService', () => {
     expect(repository.createRide).toHaveBeenCalledWith({
       id: expect.any(String),
       passengerId: dto.passengerId,
+      passengerName: 'Passenger Name',
       originAddress: dto.originAddress,
       originLat: dto.originLat,
       originLng: dto.originLng,
       destinationAddress: dto.destinationAddress,
       destinationLat: dto.destinationLat,
       destinationLng: dto.destinationLng,
-      price: dto.price,
+      price: 7.6,
       distance: dto.distance,
+      originCity: dto.originCity,
+      destinationCity: dto.destinationCity,
+      isEntorno: dto.isEntorno,
+      seatsRequested: dto.seatsRequested,
     });
-    expect(gateway.notifyNewRide).toHaveBeenCalledWith(ride);
+    expect(gateway.notifyDriversNewRide).toHaveBeenCalledWith(ride);
   });
 
   it('does not create a ride when its passenger does not exist', async () => {
@@ -94,10 +113,14 @@ describe('RidesService', () => {
         destinationLng: 1,
         price: 1,
         distance: 1,
+        originCity: 'Ceilândia',
+        destinationCity: 'Taguatinga',
+        isEntorno: false,
+        seatsRequested: 1,
       }),
     ).rejects.toThrow(NotFoundException);
     expect(repository.createRide).not.toHaveBeenCalled();
-    expect(gateway.notifyNewRide).not.toHaveBeenCalled();
+    expect(gateway.notifyDriversNewRide).not.toHaveBeenCalled();
   });
 
   it('returns a ride by id', async () => {

@@ -11,6 +11,7 @@ describe('DriversService', () => {
     createDriver: jest.fn(),
     findByCnh: jest.fn(),
     findById: jest.fn(),
+    updateRole: jest.fn(),
   };
   const usersRepository = {
     findByEmail: jest.fn(),
@@ -106,6 +107,7 @@ describe('DriversService', () => {
     repository.findById.mockResolvedValue(null);
     repository.findByCnh.mockResolvedValue(null);
     repository.createDriver.mockImplementation(async (driver) => driver);
+    repository.updateRole.mockResolvedValue({ id: 'user-id', role: 'DRIVER' });
     const dto: CreateDriverDto = {
       userId: 'user-id',
       cnh: '12345678901',
@@ -120,5 +122,6 @@ describe('DriversService', () => {
       status: 'PENDING_APPROVAL',
     });
     expect(repository.createDriver).toHaveBeenCalledWith(createdDriver);
+    expect(repository.updateRole).toHaveBeenCalledWith(dto.userId, 'DRIVER');
   });
 });
