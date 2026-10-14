@@ -1,13 +1,40 @@
+import { jest } from '@jest/globals';
+
 const mockDocument = { openapi: '3.0.0' };
 const mockApp = {
   enableCors: jest.fn(),
   listen: jest.fn().mockResolvedValue(undefined),
 };
+const mockSwaggerConfig = {
+  info: {
+    title: 'Take a Ride API',
+    description: 'Documentação da API Take a Ride.',
+    version: '1.0',
+  },
+};
+class MockDocumentBuilder {
+  setTitle() {
+    return this;
+  }
+
+  setDescription() {
+    return this;
+  }
+
+  setVersion() {
+    return this;
+  }
+
+  build() {
+    return mockSwaggerConfig;
+  }
+}
+class MockAppModule {}
 const mockCreateCalls: unknown[] = [];
 const mockCreateDocumentCalls: unknown[][] = [];
 const mockSetupCalls: unknown[][] = [];
 
-jest.mock('@nestjs/core', () => ({
+jest.unstable_mockModule('@nestjs/core', () => ({
   NestFactory: {
     create: (module: unknown) => {
       mockCreateCalls.push(module);
@@ -16,8 +43,8 @@ jest.mock('@nestjs/core', () => ({
   },
 }));
 
-jest.mock('@nestjs/swagger', () => ({
-  ...jest.requireActual('@nestjs/swagger'),
+jest.unstable_mockModule('@nestjs/swagger', () => ({
+  DocumentBuilder: MockDocumentBuilder,
   SwaggerModule: {
     createDocument: (app: unknown, config: unknown) => {
       mockCreateDocumentCalls.push([app, config]);
@@ -25,6 +52,10 @@ jest.mock('@nestjs/swagger', () => ({
     },
     setup: (...args: unknown[]) => mockSetupCalls.push(args),
   },
+}));
+
+jest.unstable_mockModule('./app.module', () => ({
+  AppModule: MockAppModule,
 }));
 
 describe('main bootstrap', () => {
@@ -58,18 +89,7 @@ describe('main bootstrap', () => {
       const AppModule = await runBootstrap('4321');
 
       expect(mockCreateCalls).toEqual([AppModule]);
-      expect(mockCreateDocumentCalls).toEqual([
-        [
-          mockApp,
-          expect.objectContaining({
-            info: expect.objectContaining({
-              title: 'Take a Ride API',
-              description: 'Documentação da API Take a Ride.',
-              version: '1.0',
-            }),
-          }),
-        ],
-      ]);
+      expect(mockCreateDocumentCalls).toEqual([[mockApp, mockSwaggerConfig]]);
       expect(mockSetupCalls).toEqual([['api/docs', mockApp, mockDocument]]);
       expect(mockApp.enableCors).toHaveBeenCalledWith({
         origin: '*',

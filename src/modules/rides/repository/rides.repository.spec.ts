@@ -113,9 +113,9 @@ describe('RidesRepository', () => {
       endedAt: new Date('2026-10-08T00:00:00.000Z'),
     };
 
-    await expect(
-      repository.updateRideStatus('ride-id', update),
-    ).resolves.toBe(ride);
+    await expect(repository.updateRideStatus('ride-id', update)).resolves.toBe(
+      ride,
+    );
     expect(set).toHaveBeenCalledWith(update);
     expect(returning).toHaveBeenCalledTimes(1);
   });
