@@ -20,11 +20,12 @@ export class RidesService {
   ) {}
 
   async createRide(dto: CreateRideDto) {
-    await this.userService.findById(dto.passengerId);
+    const user = await this.userService.findById(dto.passengerId);
 
     const rideWithId = {
       ...dto,
       id: crypto.randomUUID(),
+      passengerName: user.name,
     };
     const unitPrice = calculateFixedFare({
       originCity: dto.originCity,
@@ -39,7 +40,7 @@ export class RidesService {
       seatsRequested: dto.seatsRequested,
     });
 
-    this.gateway.notifyNewRide(newRide);
+    this.gateway.notifyDriversNewRide(newRide);
     return newRide;
   }
 

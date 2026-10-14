@@ -61,6 +61,12 @@ export class DriversService {
       role: 'DRIVER' as const,
       status: 'PENDING_APPROVAL' as const,
     };
-    return this.repository.createDriver(driverWithGeneratedId);
+    // 1. Cria o registro de motorista na tabela 'drivers'
+    const newDriver = await this.repository.createDriver(driverWithGeneratedId);
+
+    // 2. ⚡ Atualiza o papel do usuário na tabela 'users' para 'DRIVER'
+    await this.repository.updateRole(dto.userId, 'DRIVER');
+
+    return newDriver;
   }
 }

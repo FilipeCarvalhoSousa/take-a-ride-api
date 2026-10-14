@@ -16,6 +16,20 @@ export class RidesGateway {
   @WebSocketServer()
   server: Server;
 
+  @SubscribeMessage('driver_online')
+  handleDriverOnline(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { driverId: string },
+  ) {
+    client.join('drivers_online');
+    console.log(`🚖 Motorista ${data.driverId} entrou na sala de corridas.`);
+  }
+
+  // 2. Método chamado pelo RidesService ao criar uma nova corrida
+  notifyDriversNewRide(rideData: any) {
+    // Dispara a nova corrida para TODOS os motoristas conectados na sala 'drivers_online'
+    this.server.to('drivers_online').emit('new_ride_requested', rideData);
+  }
   // 1. Ouvir atualização de GPS do motorista e retransmitir
   @SubscribeMessage('driver:updateLocation')
   handleLocationUpdate(

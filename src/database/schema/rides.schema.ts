@@ -27,6 +27,7 @@ export const rides = pgTable('rides', {
   passengerId: uuid('passenger_id')
     .notNull()
     .references(() => users.id),
+  passengerName: text('passenger_name').notNull(),
   driverId: uuid('driver_id').references(() => drivers.id),
   status: rideStatusEnum('status').default('REQUESTED').notNull(),
 

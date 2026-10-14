@@ -1,24 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { desc, eq } from 'drizzle-orm';
 
-
 import { DatabaseService } from '../../../database/database.service';
 import { rides } from '../../../database/schema/rides.schema';
 import { CreateRideDto } from '../dto/create-ride.dto';
 
 @Injectable()
 export class RidesRepository {
-  constructor(
-    private readonly database: DatabaseService,
-  ) { }
+  constructor(private readonly database: DatabaseService) {}
 
-
-
-  async createRide(dto: CreateRideDto & { id: string }) {
+  async createRide(dto: any & { id: string }) {
     const [newRide] = await this.database.db
       .insert(rides)
       .values({
         passengerId: dto.passengerId,
+        passengerName: dto.passengerName,
         originAddress: dto.originAddress,
         originLat: dto.originLat,
         originLng: dto.originLng,
@@ -53,7 +49,12 @@ export class RidesRepository {
 
   async updateRideStatus(
     rideId: string,
-    data: { status: 'ACCEPTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'; driverId?: string; startedAt?: Date; endedAt?: Date },
+    data: {
+      status: 'ACCEPTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+      driverId?: string;
+      startedAt?: Date;
+      endedAt?: Date;
+    },
   ) {
     const [updatedRide] = await this.database.db
       .update(rides)

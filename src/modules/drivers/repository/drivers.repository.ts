@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { DatabaseService } from '../../../database/database.service';
 import { DriverInterface } from '../interface/drivers.interface';
+import { users } from '../../../database/schema/users.schema';
 
 @Injectable()
 export class DriversRepository {
@@ -35,5 +36,15 @@ export class DriversRepository {
       })
       .returning();
     return newDriver;
+  }
+
+  async updateRole(userId: string, role: typeof users.$inferInsert.role) {
+    const [updatedUser] = await this.database.db
+      .update(users)
+      .set({ role })
+      .where(eq(users.id, userId))
+      .returning();
+
+    return updatedUser;
   }
 }
