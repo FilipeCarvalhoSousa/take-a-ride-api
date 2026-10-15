@@ -7,14 +7,14 @@ import { DriversModule } from './modules/drivers/drivers.module';
 import { RidesModule } from './modules/rides/rides.module';
 import { UsersModule } from './modules/users/users.module';
 
-import configuration from './config/configuration';
 import { AuthModule } from './modules/auth/auth.module';
+import databaseConfig from './database/database.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
+      load: [databaseConfig],
     }),
     DatabaseModule,
     RidesModule,

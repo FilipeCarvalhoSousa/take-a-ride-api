@@ -9,29 +9,17 @@ export class DatabaseService {
 
   public readonly db;
 
-  constructor(
-    private readonly configService: ConfigService,
-  ) {
+  constructor(private readonly configService: ConfigService) {
     this.pool = new Pool({
-      host: this.configService.getOrThrow<string>(
-        'database.host',
-      ),
+      host: this.configService.getOrThrow<string>('database.host'),
 
-      port: this.configService.getOrThrow<number>(
-        'database.port',
-      ),
+      port: this.configService.getOrThrow<number>('database.port'),
 
-      database: this.configService.getOrThrow<string>(
-        'database.name',
-      ),
+      database: this.configService.getOrThrow<string>('database.name'),
 
-      user: this.configService.getOrThrow<string>(
-        'database.user',
-      ),
+      user: this.configService.getOrThrow<string>('database.user'),
 
-      password: this.configService.getOrThrow<string>(
-        'database.password',
-      ),
+      password: this.configService.getOrThrow<string>('database.password'),
 
       max: 10,
 
