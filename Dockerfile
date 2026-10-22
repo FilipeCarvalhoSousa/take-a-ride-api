@@ -1,31 +1,39 @@
+
 # 1. Estágio de Build
 FROM node:20-alpine AS builder
 
 WORKDIR /usr/src/app
 
-# Copia os arquivos de dependências
+# Instala as dependências para build
 COPY package*.json ./
 RUN npm ci
 
-# Copia o código-fonte e constrói o projeto NestJS
+# Copia o projeto e compila o NestJS
 COPY . .
 RUN npm run build
 
-# 2. Estágio de Execução (Production)
+
+# 2. Estágio de Execução
 FROM node:20-alpine AS runner
 
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
 
-# Copia apenas as dependências de produção e o build otimizado
+# Instala as dependências de produção.
+# drizzle-kit deve estar em "dependencies" no package.json.
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
+# Aplicação NestJS compilada
 COPY --from=builder /usr/src/app/dist ./dist
 
-# Expõe a porta 3000 do container
+# Configuração e arquivos de migração do Drizzle
+COPY --from=builder /usr/src/app/drizzle.config.ts ./drizzle.config.ts
+COPY --from=builder /usr/src/app/src/database/migrations ./src/database/migrations
+
+# Porta da API
 EXPOSE 3000
 
-# Executa a aplicação
+# Inicia a aplicação NestJS
 CMD ["node", "dist/main.js"]
